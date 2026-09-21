@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #f3eee4;
+  --ink: #1c1917;
+  --muted: #57534e;
+  --rule: #d4c6b1;
+  --navy: #243656;
+  --navy-hot: #1a2a44;
+  --card: #faf7f1;
+  --banner: #efe2c4;
+  --critical: #8f1d1d;
+  --serious: #9a3412;
+  --moderate: #854d0e;
+  --minor: #44403c;
+  --fail: #7f1d1d;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-navy: var(--navy);
+  --color-navy-hot: var(--navy-hot);
+  --color-card: var(--card);
+  --color-banner: var(--banner);
+  --color-critical: var(--critical);
+  --color-serious: var(--serious);
+  --color-moderate: var(--moderate);
+  --color-minor: var(--minor);
+  --color-fail: var(--fail);
+  --font-sans: var(--font-plex);
+  --font-serif: var(--font-newsreader);
+  --font-mono: var(--font-plex-mono);
+}
+
+html,
+body {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+body {
+  font-family: var(--font-plex), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-serif {
+  font-family: var(--font-newsreader), ui-serif, Georgia, serif;
+}
+
+.font-mono {
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+}
+
+input[type="url"],
+input[type="text"] {
+  font: inherit;
+}
