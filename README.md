@@ -32,8 +32,9 @@ If Playwright browsers are missing: `npx playwright install --with-deps chromium
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `DATABASE_URL` | `file:./dev.db` | Prisma database. SQLite path is relative to `prisma/`. |
-| `PLAYWRIGHT_BROWSERS_PATH` | unset | Optional override for Chromium install location. |
+| `DATABASE_URL` | `file:./dev.db` | Prisma database. SQLite path is relative to `prisma/`. The Docker image defaults to `file:/data/recheck.db`. |
+| `PORT` | `3000` | Port for `next start`. Railway and Render set this. `npm start` does not pin a port. |
+| `PLAYWRIGHT_BROWSERS_PATH` | unset | Optional override for Chromium install location. The Docker image sets `/ms-playwright`. |
 
 ### Postgres instead of SQLite
 
@@ -49,7 +50,7 @@ SQLite is the local default. For Postgres:
 ```bash
 npm run dev          # generate client, push schema, Next.js on :3000
 npm run build        # production build
-npm start            # next start --port 3000
+npm start            # next start --hostname 0.0.0.0 (PORT, default 3000)
 npm test             # unit tests (statement template, ranking, diffs, IDs)
 npm run verify:loop  # end-to-end against a running server (see below)
 ```
@@ -69,7 +70,7 @@ npm run verify:loop  # in another
 4. Generate a statement from open gaps, last scan date, and unchecked surfaces. It never claims conformity, compliance, EAA-ready, or WCAG-passed.
 5. Re-scan diffs: `N new, M cleared since last scan`. If coverage shrinks, the statement includes: `this scan reached fewer pages than [prior date] — comparisons may understate issues`.
 
-Jobs run **in-process** after the scan is created (Next.js `after()` + a process-local queue). Enough for a local/demo MVP; swap for a worker later if you deploy to serverless. See [Staging on Vercel](#staging-on-vercel).
+Jobs run **in-process** after the scan is created (Next.js `after()` + a process-local queue). That fits a local demo or a long-running container. A serverless host freezes the process and drops the queue. See [Staging on Railway / Render](#staging-on-railway--render) for the container, and [Staging on Vercel](#staging-on-vercel) for the UI-only limit.
 
 ## Statement rules (wired in code)
 
@@ -81,6 +82,54 @@ Jobs run **in-process** after the scan is created (Next.js `after()` + a process
 - Known gaps: issue titles with page/path and stable IDs
 - Coverage note when the comparison base shrinks: `This scan reached fewer pages than … — comparisons may understate issues.`
 - Closing line: `This is a working draft based on automated checks, not a legal assessment or certification.`
+
+## Staging on Railway / Render
+
+Playwright scans run in the Next.js server process. Ship the `Dockerfile` as a long-running container. The image uses Node 20 on Debian bookworm, installs Chromium, runs `npm run build`, and on boot applies the schema (`prisma db push`) then `npm start`.
+
+`npm start` is `next start --hostname 0.0.0.0`. It listens on `$PORT` (default 3000) on all interfaces so a platform proxy can reach it. Railway and Render inject `PORT`. An empty volume works: boot creates `/data/recheck.db` from the SQLite schema. Local `npm run dev` still uses `file:./dev.db` from `.env`.
+
+### Chromium dependencies
+
+The image installs the Chromium build that matches the locked Playwright package (1.63.0) with `playwright install chromium`, then the Debian libraries that build needs (NSS, fonts, GTK, and related packages) with `playwright install-deps chromium`. That is the same pair as `npx playwright install --with-deps chromium`, split so the browser download and the apt packages each land in the right stage. Browsers are stored at `/ms-playwright` (`PLAYWRIGHT_BROWSERS_PATH`). `lib/browser.ts` already launches Chromium with `--no-sandbox` and `--disable-dev-shm-usage`, which is what a container needs when the sandbox and `/dev/shm` are limited. The process runs as root so a freshly mounted `/data` volume is writable. Give the service at least 1 GB of RAM; 2 GB is more comfortable for a multi-page crawl.
+
+### Local container
+
+```bash
+docker build -t recheck .
+docker run --rm -p 3000:3000 -v recheck-data:/data recheck
+```
+
+Open [http://localhost:3000](http://localhost:3000). The volume keeps SQLite across restarts. One container only — a SQLite file is not safe shared by multiple replicas.
+
+### Railway
+
+`railway.toml` selects the Dockerfile and a `/` healthcheck. Leave the dashboard start command empty so the image runs `scripts/docker-entrypoint.sh`.
+
+1. [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub repo** → `Synex65/recheck`.
+2. Confirm the builder is the Dockerfile (Railway uses a Dockerfile when it finds one; `railway.toml` sets it explicitly).
+3. Variables. No secret is required for the SQLite demo:
+   - `DATABASE_URL` is optional. The image default is `file:/data/recheck.db`.
+   - Do not set `PORT`. Railway sets it.
+4. **Volumes** → mount path `/data` so the SQLite file survives redeploys. Keep a single replica.
+5. **Networking** → Generate domain. Open it, paste a storefront URL, and start a scan.
+
+Postgres: in `prisma/schema.prisma` set `provider = "postgresql"`, set `DATABASE_URL` to the hosted URL in the Railway dashboard, and rebuild. The Prisma client is generated when the image builds, so changing only the runtime URL does not switch providers. Boot still runs `prisma db push`. Do not commit the URL.
+
+### Render
+
+1. **New** → **Web Service** → connect `Synex65/recheck`.
+2. Runtime **Docker**. Render builds the `Dockerfile`.
+3. Pick an instance with at least 1 GB RAM (Chromium).
+4. Environment variables:
+   - `DATABASE_URL`=`file:/data/recheck.db`, or omit it and use the image default.
+   - Do not set `PORT`. Render sets it.
+5. Add a **disk** with mount path `/data` for SQLite. One instance. Render’s free instance has no durable disk; use a paid instance with a disk, or Postgres.
+6. Health check path: `/`.
+
+Postgres uses the same schema-provider change and rebuild as Railway. Put `DATABASE_URL` in the Render dashboard, not in git.
+
+This container does not make serverless Playwright work. Vercel can still serve the UI. Scans belong here (or on any VM running the same image).
 
 ## Staging on Vercel
 
@@ -120,9 +169,9 @@ The UI can deploy. **Scans are not a drop-in on serverless.**
 - Chromium is launched in-process (`lib/scan-runner.ts` via Playwright) after `POST /api/scans` (`after()` + a process-local queue). That queue dies with the function instance.
 - Playwright browsers are not part of the default Vercel build. Installing Chromium also blows past typical serverless bundle/size and read-only filesystem constraints.
 - `app/api/scans/route.ts` already sets `maxDuration = 300` (5 minutes). A multi-page crawl can still time out; bumping duration is a patch, not a design.
-- For hosted scans you need a **worker** or other long-running process that can install Chromium, keep a browser, and write to a real database. This MVP does not provide that. Use `npm run dev` locally (or a persistent VM) until a worker exists.
+- Hosted scans need a long-running container that keeps Chromium installed and the in-process queue alive. Use the Docker image in [Staging on Railway / Render](#staging-on-railway--render).
 
-Do not treat a green Vercel build as “scans work in staging.”
+A green Vercel build means the UI deployed. Scans stay on that container (or on `npm run dev` locally).
 
 ## Non-goals
 
