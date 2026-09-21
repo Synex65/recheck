@@ -51,9 +51,10 @@ export function HomeView({ scans }: { scans: RecentScan[] }) {
         <aside className="panel p-5 sm:p-6">
           <h2 className="text-xl font-bold tracking-tight">{MARKETING.recentTitle}</h2>
           {scans.length === 0 ? (
-            <p className="mt-4 rounded-xl bg-mist px-4 py-4 text-sm leading-6 text-muted">
-              {COPY.empty}
-            </p>
+            <div className="mt-4 rounded-xl bg-mist px-4 py-4">
+              <p className="text-sm leading-6 text-muted">{COPY.empty}</p>
+              <p className="mt-1 text-xs leading-5 text-muted">{COPY.emptyNote}</p>
+            </div>
           ) : (
             <ul className="mt-3 divide-y divide-rule">
               {scans.map((scan) => (

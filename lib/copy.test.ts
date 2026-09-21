@@ -4,6 +4,7 @@ import { BANNED_COPY_PATTERNS, COPY } from "./copy";
 describe("product copy", () => {
   it("uses the required empty, loading, and error strings", () => {
     expect(COPY.empty).toBe("No scan yet — paste a storefront URL to start.");
+    expect(COPY.emptyNote).toBe("Silence is not a pass.");
     expect(COPY.loading).toBe(
       "Crawling pages… issues appear as we finish each path.",
     );
@@ -29,6 +30,7 @@ describe("product copy", () => {
   it("does not use banned overlay or conformity phrasing", () => {
     const blob = [
       COPY.empty,
+      COPY.emptyNote,
       COPY.loading,
       COPY.softError,
       COPY.hardError,

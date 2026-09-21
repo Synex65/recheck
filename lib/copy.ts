@@ -1,5 +1,6 @@
 export const COPY = {
   empty: "No scan yet — paste a storefront URL to start.",
+  emptyNote: "Silence is not a pass.",
   loading: "Crawling pages… issues appear as we finish each path.",
   softError: "Scan incomplete — statement will only cover pages we reached.",
   hardError: "Scan failed — no statement generated.",
