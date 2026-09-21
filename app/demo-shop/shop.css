@@ -1,0 +1,116 @@
+.shop {
+  min-height: 100vh;
+  background: #fff;
+  color: #222;
+  font-family: Georgia, serif;
+}
+
+.shop-bar {
+  background: #111;
+  color: #ddd;
+  font-family: sans-serif;
+  font-size: 12px;
+  padding: 8px 20px;
+}
+
+.shop-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #ddd;
+}
+
+.shop-logo {
+  font-size: 28px;
+  color: #222;
+  text-decoration: none;
+}
+
+.shop-header nav {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.shop-header a {
+  color: #444;
+}
+
+.icon-only {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background: #999;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 24px;
+  padding: 32px 24px;
+}
+
+.hero img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  background: #ccc;
+}
+
+.low-contrast {
+  color: #bbbbbb;
+  background: #efefef;
+  padding: 8px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding: 24px;
+}
+
+.card img {
+  width: 100%;
+  height: 160px;
+  background: #ddd;
+}
+
+.shop-footer {
+  padding: 24px;
+  border-top: 1px solid #ddd;
+}
+
+.reviews {
+  width: 100%;
+  height: 80px;
+  border: 0;
+  background: #f3f3f3;
+}
+
+.form {
+  max-width: 420px;
+  padding: 24px;
+  display: grid;
+  gap: 12px;
+}
+
+.form input {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  background: #222;
+  color: #222;
+  border: 0;
+}
+
+.qty {
+  width: 64px;
+  padding: 8px;
+  border: 1px solid #ccc;
+}
