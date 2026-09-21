@@ -1,9 +1,31 @@
 import { COPY } from "./copy";
 import { formatScanDate } from "./format";
-import type { Severity, StatementInput } from "./types";
+import type { ReachedPage, Severity, StatementInput } from "./types";
 import { SEVERITIES } from "./types";
 
 const KNOWN_GAPS_CAP = 80;
+
+const CHECKOUT_WIDGET_UNCHECKED_RE =
+  /payment (provider )?iframes?|shop pay|checkout widgets?|hosted payment/i;
+
+export function checkoutUrlReached(pages: ReachedPage[]): boolean {
+  return pages.some((page) => {
+    if (page.pathKind === "checkout") return true;
+    const hay = `${page.url}\n${page.pathname}`.toLowerCase();
+    return (
+      hay.includes("checkout.shopify") ||
+      hay.includes("shop.app") ||
+      /\/checkouts?\b/.test(hay) ||
+      /\/kasse\b/.test(hay) ||
+      /\/zahlung/.test(hay) ||
+      /\/paiement/.test(hay)
+    );
+  });
+}
+
+export function uncheckedIncludesPaymentWidgets(items: string[]): boolean {
+  return items.some((item) => CHECKOUT_WIDGET_UNCHECKED_RE.test(item));
+}
 
 export function countBySeverity(
   issues: Array<{ severity: Severity }>,
@@ -41,6 +63,12 @@ export function draftStatement(input: StatementInput): string {
     lastScan += " (checkout not rendered)";
   }
   lines.push(lastScan);
+  if (
+    checkoutUrlReached(input.reachedPages) &&
+    uncheckedIncludesPaymentWidgets(input.unchecked)
+  ) {
+    lines.push(COPY.checkoutWidgetsUnchecked);
+  }
   lines.push("");
 
   lines.push(COPY.uncheckedHeading);

@@ -16,6 +16,8 @@ export const COPY = {
     "This is a working draft based on automated checks, not a legal assessment or certification.",
   statementTitle: "Accessibility statement (working draft)",
   uncheckedHeading: "What we didn’t check",
+  checkoutWidgetsUnchecked:
+    "Checkout URL reached — payment iframes / Shop Pay still unchecked.",
 } as const;
 
 export const BANNED_COPY_PATTERNS: RegExp[] = [
