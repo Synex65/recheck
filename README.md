@@ -35,6 +35,13 @@ If Playwright browsers are missing: `npx playwright install --with-deps chromium
 | `DATABASE_URL` | `file:./dev.db` | Prisma database. SQLite path is relative to `prisma/`. The Docker image defaults to `file:/data/recheck.db`. |
 | `PORT` | `3000` | Port for `next start`. Railway and Render set this. `npm start` does not pin a port. |
 | `PLAYWRIGHT_BROWSERS_PATH` | unset | Optional override for Chromium install location. The Docker image sets `/ms-playwright`. |
+| `RECHECK_OPERATOR_NAME` | unset | Legal name on `/imprint`. If unset, the field stays a labeled TODO. |
+| `RECHECK_OPERATOR_ADDRESS` | unset | Postal address on `/imprint`. Use `\n` for line breaks. If unset, TODO. |
+| `RECHECK_CONTACT_EMAIL` | unset | Contact email on `/imprint`. If unset, TODO. |
+
+No env vars are required for the UI, cookie notice, or legal pages. Leave the operator variables empty until the details are real. Do not invent a commercial register number or VAT ID — those rows stay “not provided” on purpose.
+
+The imprint reads operator env vars on each request (`/imprint` is dynamic). Set them in the host (Railway) or in `.env` locally; a rebuild is not required for them to show up.
 
 ### Postgres instead of SQLite
 
@@ -172,6 +179,14 @@ The UI can deploy. **Scans are not a drop-in on serverless.**
 - Hosted scans need a long-running container that keeps Chromium installed and the in-process queue alive. Use the Docker image in [Staging on Railway / Render](#staging-on-railway--render).
 
 A green Vercel build means the UI deployed. Scans stay on that container (or on `npm run dev` locally).
+
+## Legal pages
+
+Staging includes a cookie notice plus `/privacy`, `/imprint`, and `/terms`. Footer links are on the marketing and scan pages. The demo shop fixture is unchanged so scans of `/demo-shop` do not pick up the product chrome.
+
+Recheck does not set analytics or marketing cookies. The notice only records a necessary choice in `localStorage` (`recheck.consent.v1`) on that browser.
+
+The privacy notice states what a scan stores (storefront URLs, page results, findings, statement drafts), that data is not sold, and that staging is hosted on Railway. The imprint uses placeholders for operator name, address, and email (Arda / Synex65) until `RECHECK_OPERATOR_NAME`, `RECHECK_OPERATOR_ADDRESS`, and `RECHECK_CONTACT_EMAIL` are set. Register court, registration number, and VAT ID are omitted until you have real ones.
 
 ## Non-goals
 

@@ -1,5 +1,5 @@
+import { AppShell } from "@/components/AppShell";
 import { IssueList } from "@/components/IssueList";
-import { SiteHeader } from "@/components/SiteHeader";
 import { prisma } from "@/lib/db";
 import { serializeScan } from "@/lib/serialize";
 import Link from "next/link";
@@ -26,24 +26,23 @@ export default async function SharePage({
   const dto = serializeScan(scan);
 
   return (
-    <div className="min-h-full">
-      <SiteHeader />
+    <AppShell>
       <main className="mx-auto max-w-6xl space-y-8 px-5 py-10">
-        <div>
-          <p className="text-xs uppercase tracking-[0.18em] text-muted">
+        <header>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
             Shareable issue list
           </p>
-          <h1 className="mt-2 font-serif text-3xl">{dto.siteUrl}</h1>
-          <p className="mt-2 text-sm text-muted">
+          <h1 className="mt-2 break-words text-3xl font-bold tracking-tight">{dto.siteUrl}</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
             Stable IDs stay the same across re-scans of the same path and selector.
             Mark-fixed is not in v1 — use the CSV if you need a working list.
           </p>
           <p className="mt-3 text-sm">
-            <Link href={`/scans/${dto.id}`} className="text-navy underline-offset-2 hover:underline">
+            <Link href={`/scans/${dto.id}`} className="link-action">
               Full scan and statement draft
             </Link>
           </p>
-        </div>
+        </header>
         <IssueList
           issues={dto.issues}
           zeroMessage={dto.zeroFindingsMessage}
@@ -52,6 +51,6 @@ export default async function SharePage({
           unchecked={dto.unchecked}
         />
       </main>
-    </div>
+    </AppShell>
   );
 }

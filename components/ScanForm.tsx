@@ -68,9 +68,9 @@ export function ScanForm({ emptyMessage }: { emptyMessage: string }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-6">
+    <form onSubmit={onSubmit} className="space-y-6" aria-busy={pending}>
       <div>
-        <label htmlFor="storefront" className="block text-sm font-medium">
+        <label htmlFor="storefront" className="block text-sm font-semibold">
           Storefront URL
         </label>
         <input
@@ -81,15 +81,15 @@ export function ScanForm({ emptyMessage }: { emptyMessage: string }) {
           placeholder="https://your-shop.example"
           value={storefrontUrl}
           onChange={(e) => setStorefrontUrl(e.target.value)}
-          className="mt-2 w-full border border-rule bg-card px-3 py-3 outline-none ring-navy focus:ring-2"
+          className="field mt-2"
         />
       </div>
 
       <fieldset className="space-y-3">
-        <legend className="text-sm font-medium">
+        <legend className="text-sm font-semibold">
           Money pages <span className="font-normal text-muted">(optional)</span>
         </legend>
-        <p className="text-sm text-muted">
+        <p className="text-sm leading-6 text-muted">
           Home, PLP, PDP, cart, checkout. If blank, Recheck tries the storefront
           plus common cart/product paths. Shopify checkout is often hosted
           separately and may not render.
@@ -110,33 +110,21 @@ export function ScanForm({ emptyMessage }: { emptyMessage: string }) {
       </fieldset>
 
       {error ? (
-        <p className="border border-fail/30 bg-fail/5 px-3 py-2 text-sm text-fail" role="alert">
+        <p className="note note-error" role="alert">
           {error}
         </p>
       ) : (
-        <p className="text-sm text-muted">{emptyMessage}</p>
+        <p className="rounded-xl bg-mist px-3 py-3 text-sm leading-6 text-muted">{emptyMessage}</p>
       )}
 
-      <div className="flex flex-wrap items-center gap-3">
-        <button
-          type="submit"
-          disabled={pending}
-          className="bg-navy px-5 py-3 text-sm font-medium text-paper hover:bg-navy-hot disabled:opacity-60"
-        >
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+        <button type="submit" disabled={pending} className="btn btn-primary">
           {pending ? "Starting scan…" : "Start scan"}
         </button>
-        <button
-          type="button"
-          onClick={fillDemo}
-          className="border border-rule px-4 py-3 text-sm hover:bg-card"
-        >
+        <button type="button" onClick={fillDemo} className="btn btn-secondary">
           Fill local demo shop
         </button>
-        <button
-          type="button"
-          onClick={fillDemoWithoutCheckout}
-          className="border border-rule px-4 py-3 text-sm hover:bg-card"
-        >
+        <button type="button" onClick={fillDemoWithoutCheckout} className="btn btn-secondary">
           Demo with unrendered checkout
         </button>
       </div>
@@ -159,7 +147,7 @@ function MoneyField({
 }) {
   return (
     <div className={className}>
-      <label htmlFor={id} className="block text-xs uppercase tracking-wide text-muted">
+      <label htmlFor={id} className="block text-xs font-semibold tracking-wide text-muted">
         {label}
       </label>
       <input
@@ -167,7 +155,7 @@ function MoneyField({
         type="url"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-1 w-full border border-rule bg-card px-3 py-2 outline-none ring-navy focus:ring-2"
+        className="field mt-1"
       />
     </div>
   );
