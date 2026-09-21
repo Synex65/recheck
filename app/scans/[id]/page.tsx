@@ -1,5 +1,5 @@
+import { AppShell } from "@/components/AppShell";
 import { ScanLive } from "@/components/ScanLive";
-import { SiteHeader } from "@/components/SiteHeader";
 import { prisma } from "@/lib/db";
 import { enqueueScan } from "@/lib/scan-runner";
 import { serializeScan } from "@/lib/serialize";
@@ -26,11 +26,10 @@ export default async function ScanPage({
   if (scan.status === "queued") enqueueScan(scan.id);
 
   return (
-    <div className="min-h-full">
-      <SiteHeader />
+    <AppShell>
       <main className="mx-auto max-w-6xl px-5 py-10">
         <ScanLive initial={serializeScan(scan)} />
       </main>
-    </div>
+    </AppShell>
   );
 }

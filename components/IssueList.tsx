@@ -5,13 +5,6 @@ import { COPY } from "@/lib/copy";
 import { groupIssues } from "@/lib/group";
 import type { IssueDTO } from "@/lib/serialize";
 
-const SEVERITY_CLASS: Record<string, string> = {
-  critical: "text-critical",
-  serious: "text-serious",
-  moderate: "text-moderate",
-  minor: "text-minor",
-};
-
 export function IssueList({
   issues,
   zeroMessage,
@@ -31,18 +24,18 @@ export function IssueList({
   return (
     <section className="space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h2 className="font-serif text-2xl">Ranked automated findings</h2>
-          <p className="mt-1 text-sm text-muted">
+        <div className="max-w-2xl">
+          <h2 className="text-xl font-bold tracking-tight">Ranked automated findings</h2>
+          <p className="mt-1 text-sm leading-6 text-muted">
             Grouped by rule, ordered by severity and path criticality (checkout /
             cart / PDP first). Not a WCAG dump, and not a pass/fail certificate.
           </p>
         </div>
-        <div className="flex gap-2 text-sm">
-          <a href={csvPath} className="border border-rule px-3 py-2 hover:bg-card">
+        <div className="flex flex-wrap gap-2 text-sm">
+          <a href={csvPath} className="btn btn-secondary btn-sm">
             Export CSV
           </a>
-          <a href={sharePath} className="border border-rule px-3 py-2 hover:bg-card">
+          <a href={sharePath} className="btn btn-secondary btn-sm">
             Shareable list
           </a>
         </div>
@@ -52,28 +45,27 @@ export function IssueList({
         isRunning ? null : (
           <div
             className={
-              unchecked.length > 0
-                ? "grid gap-4 md:grid-cols-2 md:items-start"
-                : undefined
+              unchecked.length > 0 ? "grid gap-4 md:grid-cols-2 md:items-start" : undefined
             }
           >
             {unchecked.length > 0 ? (
-              <div className="border border-rule bg-card px-4 py-4">
-                <h3 className="font-serif text-xl">{COPY.uncheckedHeading}</h3>
-                <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm">
+              <div className="panel px-4 py-4 sm:px-5">
+                <h3 className="text-lg font-semibold">{COPY.uncheckedHeading}</h3>
+                <ul className="mt-3 space-y-2 text-sm leading-6">
                   {unchecked.map((item) => (
-                    <li key={item}>{item}</li>
+                    <li key={item} className="flex gap-2.5">
+                      <span className="unchecked-box" aria-hidden="true" />
+                      <span>{item}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
             ) : null}
-            <p className="border border-rule bg-card px-4 py-4 text-sm">
-              {zeroMessage}
-            </p>
+            <p className="panel px-4 py-4 text-sm leading-6 sm:px-5">{zeroMessage}</p>
           </div>
         )
       ) : (
-        <ol className="divide-y divide-rule border border-rule bg-card">
+        <ol className="panel divide-y divide-rule">
           {groups.map((group, index) => (
             <GroupRow key={group.ruleId} group={group} index={index} />
           ))}
@@ -95,29 +87,28 @@ function GroupRow({
   const shown = open ? group.items : group.items.slice(0, 3);
 
   return (
-    <li className="px-4 py-3">
+    <li className="px-4 py-4 sm:px-5">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <div>
+        <div className="min-w-0">
           <span className="font-mono text-xs text-muted">{index + 1}</span>
-          <h3 className="font-medium">{group.title}</h3>
+          <h3 className="font-semibold">{group.title}</h3>
         </div>
-        <div className="text-sm">
-          <span className={`font-medium ${SEVERITY_CLASS[group.severity]}`}>
-            {group.severity}
-          </span>
-          <span className="mx-2 text-muted">·</span>
+        <div className="flex flex-wrap items-center gap-2 text-sm">
+          <span className="severity-tag">{group.severity}</span>
           <span className="text-muted">
             {group.count} {group.count === 1 ? "instance" : "instances"}
           </span>
         </div>
       </div>
-      <ul className="mt-2 space-y-1 text-sm">
+      <ul className="mt-2 space-y-1.5 text-sm">
         {shown.map((issue) => (
-          <li key={issue.id} className="flex flex-wrap items-baseline gap-x-3">
-            <span className="uppercase tracking-wide text-muted">{issue.pathKind}</span>
-            <span>{issue.pathname}</span>
-            <span className="font-mono text-xs">{issue.stableId}</span>
-            <a href={issue.url} className="text-navy underline-offset-2 hover:underline">
+          <li key={issue.id} className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span className="text-xs font-semibold uppercase tracking-wide text-muted">
+              {issue.pathKind}
+            </span>
+            <span className="break-words">{issue.pathname}</span>
+            <span className="font-mono text-xs text-muted">{issue.stableId}</span>
+            <a href={issue.url} className="link-action">
               Open
             </a>
           </li>
@@ -126,7 +117,7 @@ function GroupRow({
       {extra > 0 ? (
         <button
           type="button"
-          className="mt-2 text-sm text-navy underline-offset-2 hover:underline"
+          className="link-action mt-2 text-sm"
           onClick={() => setOpen((v) => !v)}
         >
           {open ? "Show fewer" : `${extra} more on other paths`}

@@ -25,62 +25,63 @@ export function ScanLive({ initial }: { initial: ScanDTO }) {
 
   return (
     <div className="space-y-8">
-      <div>
-        <p className="text-xs uppercase tracking-[0.18em] text-muted">Scan</p>
-        <h1 className="mt-1 font-serif text-3xl md:text-4xl">{scan.siteUrl}</h1>
-      </div>
+      <header>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">Scan</p>
+          <span className="status-pill">{scan.status}</span>
+        </div>
+        <h1 className="mt-2 break-words text-3xl font-bold tracking-tight md:text-4xl">
+          {scan.siteUrl}
+        </h1>
+      </header>
 
       {running ? (
-        <p className="border border-rule bg-banner px-4 py-3" role="status">
-          {scan.loadingMessage}
+        <p className="note" role="status">
+          <span className="inline-flex items-start gap-2.5">
+            <span className="pulse-dot mt-1.5" aria-hidden="true" />
+            <span>{scan.loadingMessage}</span>
+          </span>
         </p>
       ) : null}
 
       {scan.status === "failed" ? (
-        <p className="border border-fail/40 bg-fail/5 px-4 py-3 text-fail" role="alert">
+        <p className="note note-error" role="alert">
           {COPY.hardError}
         </p>
       ) : null}
 
       {scan.status === "incomplete" ? (
-        <p className="border border-rule bg-banner px-4 py-3" role="status">
+        <p className="note" role="status">
           {COPY.softError}
         </p>
       ) : null}
 
       {failedPages.map((page) => (
-        <p
-          key={page.id}
-          className="border border-rule bg-banner px-4 py-3 text-sm"
-          role="status"
-        >
+        <p key={page.id} className="note text-sm" role="status">
           {page.failReason || COPY.partialFail(page.pathKind)}
         </p>
       ))}
 
-      {scan.diffSummary ? (
-        <p className="text-sm">
-          {scan.diffSummary}
-        </p>
-      ) : null}
+      {scan.diffSummary ? <p className="note text-sm">{scan.diffSummary}</p> : null}
 
-      {scan.coverageNote ? (
-        <p className="border border-rule bg-banner px-4 py-3 text-sm">
-          {scan.coverageNote}
-        </p>
-      ) : null}
+      {scan.coverageNote ? <p className="note text-sm">{scan.coverageNote}</p> : null}
 
       <section>
-        <h2 className="font-serif text-2xl">Paths</h2>
-        <ul className="mt-3 divide-y divide-rule border border-rule bg-card">
+        <h2 className="text-xl font-bold tracking-tight">Paths</h2>
+        <ul className="panel mt-3 divide-y divide-rule">
           {scan.pages.map((page) => (
-            <li key={page.id} className="flex flex-wrap items-baseline justify-between gap-2 px-4 py-2 text-sm">
-              <span>
-                <span className="uppercase tracking-wide text-muted">{page.pathKind}</span>
+            <li
+              key={page.id}
+              className="flex flex-wrap items-baseline justify-between gap-2 px-4 py-3 text-sm"
+            >
+              <span className="min-w-0 break-words">
+                <span className="text-xs font-semibold uppercase tracking-wide text-muted">
+                  {page.pathKind}
+                </span>
                 <span className="mx-2 text-rule">·</span>
                 {page.pathname}
               </span>
-              <span className="text-muted">{page.status}</span>
+              <span className="status-pill">{page.status}</span>
             </li>
           ))}
         </ul>
