@@ -44,7 +44,7 @@ describe("accessibility statement", () => {
     const findingsAt = body.indexOf("Automated findings still open:");
     const gapsAt = body.indexOf("Known gaps:");
     const coverageAt = body.indexOf(
-      "this scan reached fewer pages than 14 September 2026 — comparisons may understate issues",
+      "This scan reached fewer pages than 14 September 2026 — comparisons may understate issues.",
     );
     const closeAt = body.indexOf(COPY.closingLine);
 
@@ -63,8 +63,9 @@ describe("accessibility statement", () => {
       "Images must have alternate text — / (image-alt-aaa111bbbb)",
     );
     expect(body).toContain(
-      "automated findings (critical: 1 / serious: 0 / moderate: 0 / minor: 0)",
+      "Automated findings still open: critical: 1 / serious: 0 / moderate: 0 / minor: 0",
     );
+    expect(body).not.toContain("automated findings (");
   });
 
   it("never claims conformity and still lists unchecked when findings are zero", () => {
@@ -77,7 +78,11 @@ describe("accessibility statement", () => {
       serious: 0,
       moderate: 0,
       minor: 0,
-    })).toBe("automated findings (critical: 0 / serious: 0 / moderate: 0 / minor: 0)");
+    })).toBe("critical: 0 / serious: 0 / moderate: 0 / minor: 0");
+    expect(body).toContain(
+      "Automated findings still open: critical: 0 / serious: 0 / moderate: 0 / minor: 0",
+    );
+    expect(body).not.toContain("automated findings (");
     for (const pattern of BANNED_COPY_PATTERNS) {
       expect(body).not.toMatch(pattern);
     }

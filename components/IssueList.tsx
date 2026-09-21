@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { COPY } from "@/lib/copy";
 import { groupIssues } from "@/lib/group";
 import type { IssueDTO } from "@/lib/serialize";
 
@@ -16,12 +17,14 @@ export function IssueList({
   zeroMessage,
   sharePath,
   csvPath,
+  unchecked = [],
   isRunning = false,
 }: {
   issues: IssueDTO[];
   zeroMessage: string;
   sharePath: string;
   csvPath: string;
+  unchecked?: string[];
   isRunning?: boolean;
 }) {
   const groups = groupIssues(issues);
@@ -47,7 +50,27 @@ export function IssueList({
 
       {issues.length === 0 ? (
         isRunning ? null : (
-          <p className="border border-rule bg-card px-4 py-4 text-sm">{zeroMessage}</p>
+          <div
+            className={
+              unchecked.length > 0
+                ? "grid gap-4 md:grid-cols-2 md:items-start"
+                : undefined
+            }
+          >
+            {unchecked.length > 0 ? (
+              <div className="border border-rule bg-card px-4 py-4">
+                <h3 className="font-serif text-xl">{COPY.uncheckedHeading}</h3>
+                <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm">
+                  {unchecked.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+            <p className="border border-rule bg-card px-4 py-4 text-sm">
+              {zeroMessage}
+            </p>
+          </div>
         )
       ) : (
         <ol className="divide-y divide-rule border border-rule bg-card">

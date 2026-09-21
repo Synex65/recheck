@@ -23,8 +23,7 @@ export function countBySeverity(
 export function formatAutomatedFindingsLabel(
   counts: Record<Severity, number>,
 ): string {
-  const inner = SEVERITIES.map((s) => `${s}: ${counts[s]}`).join(" / ");
-  return `automated findings (${inner})`;
+  return SEVERITIES.map((s) => `${s}: ${counts[s]}`).join(" / ");
 }
 
 export function draftStatement(input: StatementInput): string {

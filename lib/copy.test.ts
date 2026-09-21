@@ -15,6 +15,9 @@ describe("product copy", () => {
       "Couldn’t render checkout — listed under unchecked.",
     );
     expect(COPY.diffSummary(3, 2)).toBe("3 new, 2 cleared since last scan");
+    expect(COPY.coverageNote("21 September 2026")).toBe(
+      "This scan reached fewer pages than 21 September 2026 — comparisons may understate issues.",
+    );
     expect(COPY.closingLine).toBe(
       "This is a working draft based on automated checks, not a legal assessment or certification.",
     );

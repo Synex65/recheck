@@ -91,6 +91,7 @@ export function ScanLive({ initial }: { initial: ScanDTO }) {
         zeroMessage={scan.zeroFindingsMessage}
         sharePath={scan.sharePath}
         csvPath={scan.csvPath}
+        unchecked={scan.unchecked}
         isRunning={running}
       />
 

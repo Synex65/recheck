@@ -84,8 +84,14 @@ async function main() {
   assert(first.statement.includes("PDFs and other downloadable documents"), "Missing PDFs");
   assert(first.statement.includes("Third-party app widgets"), "Missing third-party widgets");
   assert(
-    first.statement.includes("Automated findings still open: automated findings ("),
+    /Automated findings still open: critical: \d+ \/ serious: \d+ \/ moderate: \d+ \/ minor: \d+/.test(
+      first.statement,
+    ),
     "Findings label mismatch",
+  );
+  assert(
+    !first.statement.includes("Automated findings still open: automated findings ("),
+    "Doubled findings label",
   );
   assert(first.statement.includes("Known gaps:"), "Missing known gaps");
   assert(

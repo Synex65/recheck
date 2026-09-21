@@ -7,7 +7,7 @@ export const COPY = {
     "No automated findings on pages we reached. That is not a pass — see what we didn’t check.",
   statementPending: "Statement drafts when this scan finishes.",
   coverageNote: (priorDate: string) =>
-    `this scan reached fewer pages than ${priorDate} — comparisons may understate issues`,
+    `This scan reached fewer pages than ${priorDate} — comparisons may understate issues.`,
   diffSummary: (nNew: number, nCleared: number) =>
     `${nNew} new, ${nCleared} cleared since last scan`,
   partialFail: (page: string) =>

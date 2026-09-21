@@ -49,6 +49,7 @@ export default async function SharePage({
           zeroMessage={dto.zeroFindingsMessage}
           sharePath={dto.sharePath}
           csvPath={dto.csvPath}
+          unchecked={dto.unchecked}
         />
       </main>
     </div>
