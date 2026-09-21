@@ -22,7 +22,7 @@ describe("product copy", () => {
       "This is a working draft based on automated checks, not a legal assessment or certification.",
     );
     expect(COPY.checkoutWidgetsUnchecked).toBe(
-      "Checkout URL reached; payment iframes / Shop Pay still unchecked.",
+      "Checkout URL reached — payment iframes / Shop Pay still unchecked.",
     );
   });
 

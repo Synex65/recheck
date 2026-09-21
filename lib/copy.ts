@@ -17,7 +17,7 @@ export const COPY = {
   statementTitle: "Accessibility statement (working draft)",
   uncheckedHeading: "What we didn’t check",
   checkoutWidgetsUnchecked:
-    "Checkout URL reached; payment iframes / Shop Pay still unchecked.",
+    "Checkout URL reached — payment iframes / Shop Pay still unchecked.",
 } as const;
 
 export const BANNED_COPY_PATTERNS: RegExp[] = [

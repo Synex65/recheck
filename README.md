@@ -75,11 +75,11 @@ Jobs run **in-process** after the scan is created (Next.js `after()` + a process
 
 - Title: `Accessibility statement (working draft)`
 - Last scan: date — URL(s) reached; notes if checkout was not rendered
-- If last-scan lists a checkout URL and unchecked still includes payment iframes / Shop Pay / similar checkout widgets, add under last-scan: `Checkout URL reached; payment iframes / Shop Pay still unchecked.` (still listed under unchecked too)
+- If last-scan lists a checkout URL and unchecked still includes payment iframes / Shop Pay / similar checkout widgets, add under last-scan: `Checkout URL reached — payment iframes / Shop Pay still unchecked.` (still listed under unchecked too)
 - **What we didn’t check** (equal weight / above gaps): always PDFs/media, third-party widgets; checkout especially Shopify if not rendered
-- Automated findings still open, labeled only as `automated findings (critical / serious / …)`
+- Automated findings still open, labeled `Automated findings still open: critical: N / serious: N / …` (no doubled wrapper)
 - Known gaps: issue titles with page/path and stable IDs
-- Coverage note when the comparison base shrinks
+- Coverage note when the comparison base shrinks: `This scan reached fewer pages than … — comparisons may understate issues.`
 - Closing line: `This is a working draft based on automated checks, not a legal assessment or certification.`
 
 ## Staging on Vercel
