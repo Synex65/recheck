@@ -21,6 +21,9 @@ describe("product copy", () => {
     expect(COPY.closingLine).toBe(
       "This is a working draft based on automated checks, not a legal assessment or certification.",
     );
+    expect(COPY.checkoutWidgetsUnchecked).toBe(
+      "Checkout URL reached; payment iframes / Shop Pay still unchecked.",
+    );
   });
 
   it("does not use banned overlay or conformity phrasing", () => {
@@ -37,6 +40,7 @@ describe("product copy", () => {
       COPY.closingLine,
       COPY.statementTitle,
       COPY.uncheckedHeading,
+      COPY.checkoutWidgetsUnchecked,
     ].join("\n");
     for (const pattern of BANNED_COPY_PATTERNS) {
       expect(blob).not.toMatch(pattern);
